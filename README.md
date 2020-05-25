@@ -22,6 +22,7 @@ We recommend usage of :
 * [Roslynator extension](https://github.com/JosefPihrt/Roslynator).
 * [Resharper](https://www.jetbrains.com/resharper/)
 
+## How does it work ? ##
 <p align="center">
   <img src="documentation.png"/>
 </p>
