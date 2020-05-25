@@ -17,7 +17,10 @@ namespace NosCore.ReverseProxy
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            Logger.PrintHeader(ConsoleText);
+            try
+            {
+                Logger.PrintHeader(ConsoleText);
+            } catch {}
             await _proxy.Start(stoppingToken);
         }
     }

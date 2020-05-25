@@ -1,4 +1,11 @@
-﻿RemoteHost: 127.0.0.1
-RemotePort: 4001
-LocalPort: 4000
-Timeout: 5000
+﻿Timeout: 5000
+Channels:
+    - RemotePort: 4001
+      LocalPort: 4000
+      RemoteHost: 127.0.0.1
+      ServerType: LoginServer
+      
+    - RemotePort: 1337
+      LocalPort: 4010
+      RemoteHost: 127.0.0.1
+      ServerType: WorldServer

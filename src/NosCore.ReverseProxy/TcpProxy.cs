@@ -17,22 +17,33 @@ namespace NosCore.ReverseProxy
     {
         private readonly ILogger _logger;
         private readonly ReverseProxyConfiguration _configuration;
-
+        private readonly byte[] _packet;
         public TcpProxy(ILogger<TcpProxy> logger, ReverseProxyConfiguration configuration)
         {
             _logger = logger;
             _configuration = configuration;
+            var serializer = new Serializer(new[] { typeof(FailcPacket) });
+            var packetString = serializer.Serialize(new FailcPacket
+            {
+                Type = LoginFailType.Maintenance
+            });
+            _packet = Encoding.ASCII.GetBytes($"{packetString} ");
+            for (var i = 0; i < packetString.Length; i++)
+            {
+                _packet[i] = Convert.ToByte(_packet[i] + 15);
+            }
+
+            _packet[^1] = 25;
         }
 
-        public async Task Start(CancellationToken stoppingToken)
+        private async Task StartChannelAsync(CancellationToken stoppingToken, ChannelConfiguration channelConfiguration)
         {
-            var server = new TcpListener(new IPEndPoint(IPAddress.Loopback, _configuration.LocalPort));
-            var ip = (await Dns.GetHostAddressesAsync(_configuration.RemoteHost)).First();
-            var serializer = new Serializer(new[] { typeof(FailcPacket) });
+            var server = new TcpListener(new IPEndPoint(IPAddress.Loopback, channelConfiguration.LocalPort));
+            var ip = (await Dns.GetHostAddressesAsync(channelConfiguration.RemoteHost)).First();
             server.Server.SetSocketOption(SocketOptionLevel.IPv6, SocketOptionName.IPv6Only, false);
             server.Start();
 
-            _logger.LogInformation("proxy started {0} -> {1}", _configuration.LocalPort, $"{_configuration.RemoteHost}:{_configuration.RemotePort}");
+            _logger.LogInformation("proxy started {0} -> {1}", channelConfiguration.LocalPort, $"{channelConfiguration.RemoteHost}:{channelConfiguration.RemotePort}");
             while (!stoppingToken.IsCancellationRequested)
             {
                 try
@@ -46,7 +57,7 @@ namespace NosCore.ReverseProxy
                     {
                         try
                         {
-                            await client.ConnectAsync(ip, _configuration.RemotePort);
+                            await client.ConnectAsync(ip, channelConfiguration.RemotePort);
                             var serverStream = client.GetStream();
                             var remoteStream = remoteClient.GetStream();
                             if (remoteStream.Length > 0)
@@ -61,20 +72,11 @@ namespace NosCore.ReverseProxy
                         }
                         catch
                         {
-                            var packetString = serializer.Serialize(new FailcPacket
+                            if (channelConfiguration.ServerType == ServerType.LoginServer)
                             {
-                                Type = LoginFailType.Maintenance
-                            });
-                            var tmp = Encoding.ASCII.GetBytes($"{packetString} ");
-                            for (var i = 0; i < packetString.Length; i++)
-                            {
-                                tmp[i] = Convert.ToByte(tmp[i] + 15);
+                                await remoteClient.Client.SendAsync(_packet, SocketFlags.None);
+                                _logger.LogWarning("Maintenance Packet sent to {0}", remoteClient.Client.RemoteEndPoint);
                             }
-
-                            tmp[^1] = 25;
-                            await remoteClient.Client.SendAsync(tmp.Length == 0 ? new byte[] { 0xFF } : tmp, SocketFlags.None);
-
-                            _logger.LogWarning("Maintenance Packet sent to {0}", remoteClient.Client.RemoteEndPoint);
                             remoteClient.Close();
                         }
                     }
@@ -85,6 +87,11 @@ namespace NosCore.ReverseProxy
                 }
 
             }
+        }
+
+        public async Task Start(CancellationToken stoppingToken)
+        {
+            await Task.WhenAll(_configuration.Channels.Select(s => StartChannelAsync(stoppingToken, s)));
         }
     }
 }
