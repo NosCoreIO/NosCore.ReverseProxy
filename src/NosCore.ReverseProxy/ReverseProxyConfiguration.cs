@@ -4,13 +4,14 @@
 // |_|\__|\__/ |___/ \__/\__/|_|_\___|
 // -----------------------------------
 
+using System.Collections.Generic;
+
 namespace NosCore.ReverseProxy
 {
     public class ReverseProxyConfiguration
     {
-        public string RemoteHost { get; set; }
-        public ushort RemotePort { get; set; }
-        public ushort LocalPort { get; set; }
+        public List<ChannelConfiguration> Channels { get; set; }
+
         public ushort Timeout { get; set; }
     }
 }

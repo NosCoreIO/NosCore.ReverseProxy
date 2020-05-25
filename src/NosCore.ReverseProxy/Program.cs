@@ -4,6 +4,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using System.ComponentModel.DataAnnotations;
+using System.IO;
 
 namespace NosCore.ReverseProxy
 {
@@ -18,21 +19,23 @@ namespace NosCore.ReverseProxy
         {
             var configuration = new ReverseProxyConfiguration();
             var conf = new ConfigurationBuilder()
-                .AddYamlFile("reverse-proxy.yml", false).Build();
+                .AddYamlFile("reverse-proxy.yml", false)
+                .AddYamlFile("logger.yml")
+                .Build();
             conf.Bind(configuration);
             Validator.ValidateObject(configuration, new ValidationContext(configuration), true);
             return Host.CreateDefaultBuilder(args)
+                           .UseWindowsService()
+                           .UseSystemd()
                            .ConfigureLogging(
                                loggingBuilder =>
                                {
-                                   var build = new ConfigurationBuilder()
-                                       .AddYamlFile("logger.yml")
-                                       .Build();
                                    var logger = new LoggerConfiguration()
-                                       .ReadFrom.Configuration(build)
+                                       .ReadFrom.Configuration(conf)
                                        .CreateLogger();
                                    loggingBuilder.ClearProviders();
                                    loggingBuilder.AddSerilog(logger, dispose: true);
+                                   loggingBuilder.AddEventLog();
                                }
                            )
                            .ConfigureServices((hostContext, services) =>
