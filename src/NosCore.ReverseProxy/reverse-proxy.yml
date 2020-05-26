@@ -5,7 +5,7 @@ Channels:
       RemoteHost: 127.0.0.1
       ServerType: LoginServer
       
-    - RemotePort: 1337
-      LocalPort: 4010
+    - RemotePort: 4010
+      LocalPort: 1337
       RemoteHost: 127.0.0.1
       ServerType: WorldServer

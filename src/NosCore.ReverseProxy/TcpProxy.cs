@@ -60,15 +60,9 @@ namespace NosCore.ReverseProxy
                             await client.ConnectAsync(ip, channelConfiguration.RemotePort);
                             var serverStream = client.GetStream();
                             var remoteStream = remoteClient.GetStream();
-                            if (remoteStream.Length > 0)
-                            {
-                                await Task.WhenAny(remoteStream.CopyToAsync(serverStream, stoppingToken), serverStream.CopyToAsync(remoteStream, stoppingToken));
-                                _logger.LogInformation("Packet received from {0}", remoteClient.Client.RemoteEndPoint);
-                            }
-                            else
-                            {
-                                throw new InvalidOperationException();
-                            }
+
+                            await Task.WhenAny(remoteStream.CopyToAsync(serverStream, stoppingToken), serverStream.CopyToAsync(remoteStream, stoppingToken));
+                            _logger.LogInformation("Packet received from {0}", remoteClient.Client.RemoteEndPoint);
                         }
                         catch
                         {
@@ -89,9 +83,9 @@ namespace NosCore.ReverseProxy
             }
         }
 
-        public async Task Start(CancellationToken stoppingToken)
+        public Task Start(CancellationToken stoppingToken)
         {
-            await Task.WhenAll(_configuration.Channels.Select(s => StartChannelAsync(stoppingToken, s)));
+            return Task.WhenAll(_configuration.Channels.Select(s => StartChannelAsync(stoppingToken, s)));
         }
     }
 }
