@@ -7,7 +7,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace NosCore.ReverseProxy
+namespace NosCore.ReverseProxy.TcpProxy
 {
     public interface IProxy
     {

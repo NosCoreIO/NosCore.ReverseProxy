@@ -1,10 +1,11 @@
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using NosCore.ReverseProxy.Configuration;
+using NosCore.ReverseProxy.TcpClientFactory;
+using NosCore.ReverseProxy.TcpProxy;
 using Serilog;
-using System.ComponentModel.DataAnnotations;
-using System.IO;
+using NosCore.Shared.Configuration;
 
 namespace NosCore.ReverseProxy
 {
@@ -18,30 +19,23 @@ namespace NosCore.ReverseProxy
         public static IHostBuilder CreateHostBuilder(string[] args)
         {
             var configuration = new ReverseProxyConfiguration();
-            var conf = new ConfigurationBuilder()
-                .AddYamlFile("reverse-proxy.yml", false)
-                .AddYamlFile("logger.yml")
-                .Build();
-            conf.Bind(configuration);
-            Validator.ValidateObject(configuration, new ValidationContext(configuration), true);
+            ConfiguratorBuilder.InitializeConfiguration(args, new[] { "logger.yml", "reverse-proxy.yml" }, configuration);
             return Host.CreateDefaultBuilder(args)
                            .UseWindowsService()
                            .UseSystemd()
                            .ConfigureLogging(
                                loggingBuilder =>
                                {
-                                   var logger = new LoggerConfiguration()
-                                       .ReadFrom.Configuration(conf)
-                                       .CreateLogger();
                                    loggingBuilder.ClearProviders();
-                                   loggingBuilder.AddSerilog(logger, dispose: true);
+                                   loggingBuilder.AddSerilog(dispose: true);
                                    loggingBuilder.AddEventLog();
                                }
                            )
                            .ConfigureServices((hostContext, services) =>
                            {
                                services.AddSingleton(configuration);
-                               services.AddSingleton(typeof(IProxy), typeof(TcpProxy));
+                               services.AddSingleton(typeof(ITcpClientFactory), typeof(TcpClientFactory.TcpClientFactory));
+                               services.AddSingleton(typeof(IProxy), typeof(TcpProxy.TcpProxy));
                                services.AddHostedService<Worker>();
                            });
         }

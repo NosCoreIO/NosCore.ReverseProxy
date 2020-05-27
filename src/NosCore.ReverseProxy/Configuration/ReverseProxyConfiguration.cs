@@ -6,7 +6,7 @@
 
 using System.Collections.Generic;
 
-namespace NosCore.ReverseProxy
+namespace NosCore.ReverseProxy.Configuration
 {
     public class ReverseProxyConfiguration
     {

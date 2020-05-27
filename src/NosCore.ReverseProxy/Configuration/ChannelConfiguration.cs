@@ -4,13 +4,10 @@
 // |_|\__|\__/ |___/ \__/\__/|_|_\___|
 // -----------------------------------
 
-namespace NosCore.ReverseProxy
+using NosCore.Shared.Enumerations;
+
+namespace NosCore.ReverseProxy.Configuration
 {
-    public enum ServerType
-    {
-        WorldServer,
-        LoginServer
-    }
     public class ChannelConfiguration
     {
         public ServerType ServerType { get; set; }

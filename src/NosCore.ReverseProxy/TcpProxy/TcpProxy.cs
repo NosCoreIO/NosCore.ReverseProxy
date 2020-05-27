@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,18 +9,24 @@ using Microsoft.Extensions.Logging;
 using NosCore.Packets;
 using NosCore.Packets.Enumerations;
 using NosCore.Packets.ServerPackets.Login;
+using NosCore.ReverseProxy.Configuration;
+using NosCore.ReverseProxy.TcpClientFactory;
+using NosCore.Shared.Enumerations;
 
-namespace NosCore.ReverseProxy
+namespace NosCore.ReverseProxy.TcpProxy
 {
     public class TcpProxy : IProxy
     {
         private readonly ILogger _logger;
         private readonly ReverseProxyConfiguration _configuration;
         private readonly byte[] _packet;
-        public TcpProxy(ILogger<TcpProxy> logger, ReverseProxyConfiguration configuration)
+        private readonly ITcpClientFactory _tcpClientFactory;
+
+        public TcpProxy(ILogger<TcpProxy> logger, ReverseProxyConfiguration configuration, ITcpClientFactory tcpClientFactory)
         {
             _logger = logger;
             _configuration = configuration;
+            _tcpClientFactory = tcpClientFactory;
             var serializer = new Serializer(new[] { typeof(FailcPacket) });
             var packetString = serializer.Serialize(new FailcPacket
             {
@@ -36,7 +41,7 @@ namespace NosCore.ReverseProxy
             _packet[^1] = 25;
         }
 
-        private async Task StartChannelAsync(CancellationToken stoppingToken, ChannelConfiguration channelConfiguration)
+        private async Task StartChannelAsync(CancellationToken stoppingToken, ChannelConfiguration channelConfiguration, ITcpClientFactory tcpClientFactory)
         {
             var server = new TcpListener(new IPEndPoint(IPAddress.Loopback, channelConfiguration.LocalPort));
             var ip = (await Dns.GetHostAddressesAsync(channelConfiguration.RemoteHost)).First();
@@ -53,7 +58,7 @@ namespace NosCore.ReverseProxy
                     remoteClient.NoDelay = true;
                     remoteClient.ReceiveTimeout = _configuration.Timeout;
                     using (remoteClient)
-                    using (var client = new TcpClient())
+                    using (var client = tcpClientFactory.CreateTcpClient())
                     {
                         try
                         {
@@ -85,7 +90,7 @@ namespace NosCore.ReverseProxy
 
         public Task Start(CancellationToken stoppingToken)
         {
-            return Task.WhenAll(_configuration.Channels.Select(s => StartChannelAsync(stoppingToken, s)));
+            return Task.WhenAll(_configuration.Channels.Select(s => StartChannelAsync(stoppingToken, s, _tcpClientFactory)));
         }
     }
 }
