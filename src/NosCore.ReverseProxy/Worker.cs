@@ -1,6 +1,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
+using NosCore.ReverseProxy.TcpProxy;
 using NosCore.Shared.I18N;
 
 namespace NosCore.ReverseProxy
@@ -20,7 +21,12 @@ namespace NosCore.ReverseProxy
             try
             {
                 Logger.PrintHeader(ConsoleText);
-            } catch {}
+            }
+            catch
+            {
+                // ignored as header is not important
+            }
+
             await _proxy.Start(stoppingToken);
         }
     }
