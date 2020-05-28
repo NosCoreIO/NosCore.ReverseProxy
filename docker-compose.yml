@@ -1,0 +1,24 @@
+version: '3.7'
+
+services:  
+  reverse-proxy:
+    container_name: noscore-reverse-proxy
+    build:
+      context: ./
+      dockerfile: deploy/Dockerfile
+    restart: unless-stopped
+    ports:
+      - 4000:4000
+      - 1337:1337
+    expose:
+      - 4000
+      - 1337
+    networks: 
+      - noscore-network
+    volumes:
+      - ./build/netcoreapp3.1/linux-x64:/app/build/bin
+      - ./configuration/:/app/configuration
+
+networks:
+  noscore-network:
+    driver: bridge
