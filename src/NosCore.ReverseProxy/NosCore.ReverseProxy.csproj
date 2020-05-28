@@ -1,8 +1,11 @@
-<Project Sdk="Microsoft.NET.Sdk.Worker">
+﻿<Project Sdk="Microsoft.NET.Sdk.Worker">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-    <UserSecretsId>dotnet-NosCore.ReverseProxy-8304EA9A-CD10-4A74-895C-E56A14BAFE5D</UserSecretsId>
+      <TargetFramework>netcoreapp3.1</TargetFramework>
+	  <OutputType>Exe</OutputType>
+	  <TieredCompilation>true</TieredCompilation>
+	  <LangVersion>latest</LangVersion>
+	  <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -16,7 +19,7 @@
     <PackageReference Include="Microsoft.Extensions.Logging" Version="3.1.4" />
     <PackageReference Include="NetEscapades.Configuration.Yaml" Version="2.0.1" />
     <PackageReference Include="NosCore.Packets" Version="0.24.2" />
-    <PackageReference Include="NosCore.Shared" Version="1.4.0" />
+    <PackageReference Include="NosCore.Shared" Version="1.5.0" />
     <PackageReference Include="Serilog.Extensions.Hosting" Version="3.1.0" />
   </ItemGroup>
 
