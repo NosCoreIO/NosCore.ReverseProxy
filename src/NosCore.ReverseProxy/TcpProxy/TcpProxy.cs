@@ -10,6 +10,7 @@ using NosCore.Packets;
 using NosCore.Packets.Enumerations;
 using NosCore.Packets.ServerPackets.Login;
 using NosCore.ReverseProxy.Configuration;
+using NosCore.ReverseProxy.TcpClient;
 using NosCore.ReverseProxy.TcpClientFactory;
 using NosCore.Shared.Enumerations;
 
@@ -32,7 +33,7 @@ namespace NosCore.ReverseProxy.TcpProxy
             {
                 Type = LoginFailType.Maintenance
             });
-            _packet = Encoding.ASCII.GetBytes($"{packetString} ");
+            _packet = Encoding.UTF8.GetBytes($"{packetString} ");
             for (var i = 0; i < packetString.Length; i++)
             {
                 _packet[i] = Convert.ToByte(_packet[i] + 15);
@@ -41,10 +42,36 @@ namespace NosCore.ReverseProxy.TcpProxy
             _packet[^1] = 25;
         }
 
-        private async Task StartChannelAsync(CancellationToken stoppingToken, ChannelConfiguration channelConfiguration, ITcpClientFactory tcpClientFactory)
+        private async Task HandleClientAsync(CancellationToken stoppingToken, System.Net.Sockets.TcpClient remoteClient, ChannelConfiguration channelConfiguration)
+        {
+            _logger.LogInformation("Packet from {0} received", remoteClient.Client.RemoteEndPoint);
+            var ip = (await Dns.GetHostAddressesAsync(channelConfiguration.RemoteHost)).First();
+            remoteClient.NoDelay = true;
+            remoteClient.ReceiveTimeout = _configuration.Timeout;
+            using var client = _tcpClientFactory.CreateTcpClient();
+            try
+            {
+                await client.ConnectAsync(ip, channelConfiguration.RemotePort);
+                var serverStream = client.GetStream();
+                var remoteStream = remoteClient.GetStream();
+
+                await Task.WhenAny(remoteStream.CopyToAsync(serverStream, stoppingToken), serverStream.CopyToAsync(remoteStream, stoppingToken));
+                _logger.LogInformation("Packet received from {0}", remoteClient.Client.RemoteEndPoint);
+            }
+            catch
+            {
+                if (channelConfiguration.ServerType == ServerType.LoginServer)
+                {
+                    await remoteClient.Client.SendAsync(_packet, SocketFlags.None);
+                    await Task.Delay(1000);//this prevent sending close too fast
+                    _logger.LogWarning("Maintenance Packet sent to {0}", remoteClient.Client.RemoteEndPoint);
+                }
+            }
+        }
+
+        private async Task StartChannelAsync(CancellationToken stoppingToken, ChannelConfiguration channelConfiguration)
         {
             var server = new TcpListener(new IPEndPoint(IPAddress.Loopback, channelConfiguration.LocalPort));
-            var ip = (await Dns.GetHostAddressesAsync(channelConfiguration.RemoteHost)).First();
             server.Server.SetSocketOption(SocketOptionLevel.IPv6, SocketOptionName.IPv6Only, false);
             server.Start();
 
@@ -53,32 +80,8 @@ namespace NosCore.ReverseProxy.TcpProxy
             {
                 try
                 {
-                    var remoteClient = await server.AcceptTcpClientAsync();
-                    _logger.LogInformation("Packet from {0} received", remoteClient.Client.RemoteEndPoint);
-                    remoteClient.NoDelay = true;
-                    remoteClient.ReceiveTimeout = _configuration.Timeout;
-                    using (remoteClient)
-                    using (var client = tcpClientFactory.CreateTcpClient())
-                    {
-                        try
-                        {
-                            await client.ConnectAsync(ip, channelConfiguration.RemotePort);
-                            var serverStream = client.GetStream();
-                            var remoteStream = remoteClient.GetStream();
-
-                            await Task.WhenAny(remoteStream.CopyToAsync(serverStream, stoppingToken), serverStream.CopyToAsync(remoteStream, stoppingToken));
-                            _logger.LogInformation("Packet received from {0}", remoteClient.Client.RemoteEndPoint);
-                        }
-                        catch
-                        {
-                            if (channelConfiguration.ServerType == ServerType.LoginServer)
-                            {
-                                await remoteClient.Client.SendAsync(_packet, SocketFlags.None);
-                                _logger.LogWarning("Maintenance Packet sent to {0}", remoteClient.Client.RemoteEndPoint);
-                            }
-                            remoteClient.Close();
-                        }
-                    }
+                    using var remoteClient = await server.AcceptTcpClientAsync();
+                    await HandleClientAsync(stoppingToken, remoteClient, channelConfiguration);
                 }
                 catch (Exception ex)
                 {
@@ -90,7 +93,7 @@ namespace NosCore.ReverseProxy.TcpProxy
 
         public Task Start(CancellationToken stoppingToken)
         {
-            return Task.WhenAll(_configuration.Channels.Select(s => StartChannelAsync(stoppingToken, s, _tcpClientFactory)));
+            return Task.WhenAll(_configuration.Channels.Select(s => StartChannelAsync(stoppingToken, s)));
         }
     }
 }

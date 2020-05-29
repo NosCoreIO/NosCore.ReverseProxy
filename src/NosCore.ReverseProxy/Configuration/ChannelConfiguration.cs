@@ -4,15 +4,20 @@
 // |_|\__|\__/ |___/ \__/\__/|_|_\___|
 // -----------------------------------
 
+using System.ComponentModel.DataAnnotations;
 using NosCore.Shared.Enumerations;
 
 namespace NosCore.ReverseProxy.Configuration
 {
     public class ChannelConfiguration
     {
-        public ServerType ServerType { get; set; }
-        public string RemoteHost { get; set; }
+        [Required]
+        public ServerType? ServerType { get; set; }
+        [Required]
+        public string? RemoteHost { get; set; }
+        [Range(1, ushort.MaxValue)]
         public ushort RemotePort { get; set; }
+        [Range(1, ushort.MaxValue)]
         public ushort LocalPort { get; set; }
     }
 }
