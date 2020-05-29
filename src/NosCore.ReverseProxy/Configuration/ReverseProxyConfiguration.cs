@@ -5,12 +5,14 @@
 // -----------------------------------
 
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace NosCore.ReverseProxy.Configuration
 {
     public class ReverseProxyConfiguration
     {
-        public List<ChannelConfiguration> Channels { get; set; }
+        [Required]
+        public List<ChannelConfiguration>? Channels { get; set; }
 
         public ushort Timeout { get; set; }
     }
