@@ -1,5 +1,5 @@
 cd ..
 
 dotnet build --runtime linux-musl-x64 --nologo
-docker-compose up -d reverse-proxy
+docker-compose up --force-recreate --build reverse-proxy
 PAUSE
