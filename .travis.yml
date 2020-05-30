@@ -26,7 +26,6 @@ jobs:
         - dotnet build
         - dotnet test test/NosCore.ReverseProxy.Tests -v m
 deploy:
-  cleanup: false
   provider: script
   script: sudo bash ./script/docker-publish.sh
   on:
