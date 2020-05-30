@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using NosCore.ReverseProxy.Configuration;
+using NosCore.ReverseProxy.I18N;
 using NosCore.ReverseProxy.TcpClientFactory;
 using NosCore.ReverseProxy.TcpProxy;
 using Serilog;
@@ -21,6 +22,8 @@ namespace NosCore.ReverseProxy
         {
             var configuration = new ReverseProxyConfiguration();
             ConfiguratorBuilder.InitializeConfiguration(args, new[] { "logger.yml", "reverse-proxy.yml" }).Bind(configuration);
+            LogLanguage.Language = configuration.Language;
+
             return Host.CreateDefaultBuilder(args)
                            .UseWindowsService()
                            .UseSystemd()
