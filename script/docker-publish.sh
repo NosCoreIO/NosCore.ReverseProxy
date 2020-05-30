@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 
 echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-dotnet publish ./src/NosCore.ReverseProxy -c Release -o ./bin/Docker --runtime linux-musl-x64 --nologo
+dotnet build --runtime linux-musl-x64 --nologo
 
 DOCKER_ENV=''
 DOCKER_TAG=''
+export PATH=$PATH:$HOME/.local/bin
 
 case "$TRAVIS_BRANCH" in
   "master")
