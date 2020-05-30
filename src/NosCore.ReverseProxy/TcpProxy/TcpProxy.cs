@@ -42,7 +42,7 @@ namespace NosCore.ReverseProxy.TcpProxy
             _packet[^1] = 25;
         }
 
-        private async Task HandleClientAsync(CancellationToken stoppingToken, System.Net.Sockets.TcpClient remoteClient, ChannelConfiguration channelConfiguration)
+        internal async Task HandleClientAsync(CancellationToken stoppingToken, System.Net.Sockets.TcpClient remoteClient, ChannelConfiguration channelConfiguration)
         {
             _logger.LogInformation("Packet from {0} received", remoteClient.Client.RemoteEndPoint);
             var ip = (await Dns.GetHostAddressesAsync(channelConfiguration.RemoteHost)).First();
