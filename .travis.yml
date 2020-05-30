@@ -12,6 +12,7 @@ install:
   - 'export PATH="$PATH:$HOME/.local/bin"'
   - sudo snap alias dotnet-sdk.dotnet dotnet
   - dotnet --version
+  - chmod -R a+x scripts
 env:
   global:
     - DOTNET_SKIP_FIRST_TIME_EXPERIENCE=true
@@ -24,3 +25,9 @@ jobs:
         - dotnet restore
         - dotnet build
         - dotnet test test/NosCore.ReverseProxy.Tests -v m
+deploy:
+  cleanup: false
+  provider: script
+  script: sudo bash ./script/docker-publish.sh
+  on:
+    branch: master
