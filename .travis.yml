@@ -12,7 +12,7 @@ install:
   - 'export PATH="$PATH:$HOME/.local/bin"'
   - sudo snap alias dotnet-sdk.dotnet dotnet
   - dotnet --version
-  - chmod -R a+x scripts
+  - chmod -R a+x script
 env:
   global:
     - DOTNET_SKIP_FIRST_TIME_EXPERIENCE=true
