@@ -1,6 +1,9 @@
 ARG REPO=mcr.microsoft.com/dotnet/core/runtime
 FROM $REPO:3.1-alpine
 
+RUN apk add --no-cache icu-libs
+ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
+
 # Install ASP.NET Core
 RUN aspnetcore_version=3.1.4 \
     && wget -O aspnetcore.tar.gz https://dotnetcli.azureedge.net/dotnet/aspnetcore/Runtime/$aspnetcore_version/aspnetcore-runtime-$aspnetcore_version-linux-musl-x64.tar.gz \
