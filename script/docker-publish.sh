@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-sudo dotnet publish ./src/NosCore.ReverseProxy --runtime linux-musl-x64 --nologo
+dotnet build --runtime linux-musl-x64 --nologo
 
 DOCKER_ENV=''
 DOCKER_TAG=''
