@@ -28,7 +28,6 @@ namespace NosCore.ReverseProxy
                                {
                                    loggingBuilder.ClearProviders();
                                    loggingBuilder.AddSerilog(dispose: true);
-                                   loggingBuilder.AddEventLog();
                                }
                            )
                            .ConfigureServices((hostContext, services) =>
