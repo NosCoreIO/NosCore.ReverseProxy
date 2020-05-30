@@ -1,4 +1,5 @@
 ﻿Timeout: 5000
+Language: en
 Channels:
     - RemotePort: 4001
       LocalPort: 4000

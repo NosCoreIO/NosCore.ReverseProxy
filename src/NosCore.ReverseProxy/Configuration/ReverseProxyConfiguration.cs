@@ -6,10 +6,11 @@
 
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using NosCore.Shared.Configuration;
 
 namespace NosCore.ReverseProxy.Configuration
 {
-    public class ReverseProxyConfiguration
+    public class ReverseProxyConfiguration : LanguageConfiguration
     {
         [Required]
         public List<ChannelConfiguration>? Channels { get; set; }
