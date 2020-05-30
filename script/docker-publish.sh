@@ -14,5 +14,5 @@ case "$TRAVIS_BRANCH" in
 esac
 
 docker build -f ./deploy/Dockerfile -t noscore.reverseproxy:$DOCKER_TAG --no-cache .
-docker tag noscorebot:$DOCKER_TAG noscoreio/noscore.reverseproxy:$DOCKER_TAG
+docker tag noscore.reverseproxy:$DOCKER_TAG noscoreio/noscore.reverseproxy:$DOCKER_TAG
 docker push noscoreio/noscore.reverseproxy:$DOCKER_TAG
