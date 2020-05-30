@@ -71,8 +71,8 @@ namespace NosCore.ReverseProxy.TcpProxy
 
         private async Task StartChannelAsync(CancellationToken stoppingToken, ChannelConfiguration channelConfiguration)
         {
-            var server = new TcpListener(new IPEndPoint(IPAddress.Loopback, channelConfiguration.LocalPort));
-            server.Server.SetSocketOption(SocketOptionLevel.IPv6, SocketOptionName.IPv6Only, false);
+            var server = new TcpListener(IPAddress.Any, channelConfiguration.LocalPort);
+            //server.Server.SetSocketOption(SocketOptionLevel.IPv6, SocketOptionName.IPv6Only, false);
             server.Start();
 
             _logger.LogInformation("proxy started {0} -> {1}", channelConfiguration.LocalPort, $"{channelConfiguration.RemoteHost}:{channelConfiguration.RemotePort}");
