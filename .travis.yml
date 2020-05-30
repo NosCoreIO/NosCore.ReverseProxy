@@ -27,6 +27,6 @@ jobs:
         - dotnet test test/NosCore.ReverseProxy.Tests -v m
 deploy:
   provider: script
-  script: ./script/docker-publish.sh
+  script: sudo bash ./script/docker-publish.sh
   on:
     branch: master
