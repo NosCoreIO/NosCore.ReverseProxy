@@ -34,7 +34,7 @@ namespace NosCore.ReverseProxy.TcpProxy
             {
                 Type = LoginFailType.Maintenance
             });
-            _packet = Encoding.UTF8.GetBytes($"{packetString} ");
+            _packet = Encoding.Default.GetBytes($"{packetString} ");
             for (var i = 0; i < packetString.Length; i++)
             {
                 _packet[i] = Convert.ToByte(_packet[i] + 15);
