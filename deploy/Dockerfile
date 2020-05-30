@@ -9,6 +9,8 @@ RUN aspnetcore_version=3.1.4 \
     && tar -ozxf aspnetcore.tar.gz -C /usr/share/dotnet ./shared/Microsoft.AspNetCore.App \
     && rm aspnetcore.tar.gz
 
+COPY . /app
+
 WORKDIR /app/build/netcoreapp3.1/linux-musl-x64
 
 EXPOSE 4000 1337
