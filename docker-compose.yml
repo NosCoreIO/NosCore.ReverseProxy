@@ -16,7 +16,7 @@ services:
     networks: 
       - noscore-network
     volumes:
-      - ./build/netcoreapp3.1/linux-musl-x64:/app/build/netcoreapp3.1/linux-musl-x64
+      - ./build/netcoreapp3.1:/app/build/netcoreapp3.1/linux-musl-x64
       - ./configuration/:/app/build/configuration
 
 networks:
