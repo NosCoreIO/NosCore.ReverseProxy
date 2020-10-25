@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -19,7 +20,7 @@ namespace NosCore.ReverseProxy
         public static IHostBuilder CreateHostBuilder(string[] args)
         {
             var configuration = new ReverseProxyConfiguration();
-            ConfiguratorBuilder.InitializeConfiguration(args, new[] { "logger.yml", "reverse-proxy.yml" }, configuration);
+            ConfiguratorBuilder.InitializeConfiguration(args, new[] { "logger.yml", "reverse-proxy.yml" }).Bind(configuration);
             return Host.CreateDefaultBuilder(args)
                            .UseWindowsService()
                            .UseSystemd()
