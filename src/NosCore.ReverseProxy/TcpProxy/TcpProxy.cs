@@ -80,7 +80,7 @@ namespace NosCore.ReverseProxy.TcpProxy
             {
                 try
                 {
-                    using var remoteClient = await server.AcceptTcpClientAsync();
+                    var remoteClient = await server.AcceptTcpClientAsync();
                     _ = HandleClientAsync(stoppingToken, remoteClient, channelConfiguration);
                 }
                 catch (Exception ex)
