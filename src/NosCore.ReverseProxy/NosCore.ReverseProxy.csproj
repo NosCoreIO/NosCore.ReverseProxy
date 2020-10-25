@@ -6,6 +6,7 @@
 		<TieredCompilation>true</TieredCompilation>
 		<LangVersion>latest</LangVersion>
 		<Nullable>enable</Nullable>
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -18,13 +19,13 @@
 
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Extensions.Hosting" Version="3.1.4" />
-		<PackageReference Include="Microsoft.Extensions.Hosting.Systemd" Version="3.1.4" />
-		<PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="3.1.4" />
-		<PackageReference Include="Microsoft.Extensions.Logging" Version="3.1.4" />
+		<PackageReference Include="Microsoft.Extensions.Hosting" Version="3.1.9" />
+		<PackageReference Include="Microsoft.Extensions.Hosting.Systemd" Version="3.1.9" />
+		<PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="3.1.9" />
+		<PackageReference Include="Microsoft.Extensions.Logging" Version="3.1.9" />
 		<PackageReference Include="NetEscapades.Configuration.Yaml" Version="2.0.1" />
-		<PackageReference Include="NosCore.Packets" Version="0.24.2" />
-		<PackageReference Include="NosCore.Shared" Version="1.5.0" />
+		<PackageReference Include="NosCore.Packets" Version="1.0.0" />
+		<PackageReference Include="NosCore.Shared" Version="1.9.2" />
 		<PackageReference Include="Serilog.Extensions.Hosting" Version="3.1.0" />
 	</ItemGroup>
 
@@ -35,17 +36,17 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Compile Update="Resource\LocalizedResources.Designer.cs">
-	    <DesignTime>True</DesignTime>
-	    <AutoGen>True</AutoGen>
-	    <DependentUpon>LocalizedResources.resx</DependentUpon>
-	  </Compile>
+		<Compile Update="Resource\LocalizedResources.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>LocalizedResources.resx</DependentUpon>
+		</Compile>
 	</ItemGroup>
 
 	<ItemGroup>
-	  <EmbeddedResource Update="Resource\LocalizedResources.resx">
-	    <Generator>PublicResXFileCodeGenerator</Generator>
-	    <LastGenOutput>LocalizedResources.Designer.cs</LastGenOutput>
-	  </EmbeddedResource>
+		<EmbeddedResource Update="Resource\LocalizedResources.resx">
+			<Generator>PublicResXFileCodeGenerator</Generator>
+			<LastGenOutput>LocalizedResources.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
 	</ItemGroup>
 </Project>
