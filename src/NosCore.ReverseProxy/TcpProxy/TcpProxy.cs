@@ -46,7 +46,7 @@ namespace NosCore.ReverseProxy.TcpProxy
         internal async Task HandleClientAsync(CancellationToken stoppingToken, System.Net.Sockets.TcpClient remoteClient, ChannelConfiguration channelConfiguration)
         {
             _logger.LogTrace(LogLanguage.Instance.GetMessageFromKey(LogLanguageKey.PACKET_RECEIVED), remoteClient.Client.RemoteEndPoint);
-            var ip = (await Dns.GetHostAddressesAsync(channelConfiguration.RemoteHost)).First();
+            var ip = (await Dns.GetHostAddressesAsync(channelConfiguration.RemoteHost ?? string.Empty)).First();
             remoteClient.NoDelay = true;
             remoteClient.ReceiveTimeout = _configuration.Timeout;
             using var client = _tcpClientFactory.CreateTcpClient();
@@ -93,7 +93,7 @@ namespace NosCore.ReverseProxy.TcpProxy
 
         public Task Start(CancellationToken stoppingToken)
         {
-            return Task.WhenAll(_configuration.Channels.Select(s => StartChannelAsync(stoppingToken, s)));
+            return Task.WhenAll(_configuration.Channels!.Select(s => StartChannelAsync(stoppingToken, s)));
         }
     }
 }
