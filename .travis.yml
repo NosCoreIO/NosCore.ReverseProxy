@@ -19,7 +19,7 @@ install:
 script:
     - dotnet restore
     - dotnet build
-    - dotnet test test/NosCore.ReverseProxy.Tests -v m
+    - dotnet test test/NosCore.ReverseProxy.Tests -v m --no-build
 deploy:
   cleanup: true
   provider: script
