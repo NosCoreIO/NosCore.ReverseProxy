@@ -1,4 +1,4 @@
-  ARG REPO=mcr.microsoft.com/dotnet/runtime
+ARG REPO=mcr.microsoft.com/dotnet/runtime
 FROM $REPO:5.0-alpine
 
 RUN apk add --no-cache icu-libs	# Install .NET
