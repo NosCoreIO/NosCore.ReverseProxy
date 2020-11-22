@@ -17,6 +17,7 @@ install:
     - sudo snap alias dotnet-sdk.dotnet dotnet
     - chmod -R a+x scripts
 script:
+    - dotnet --version
     - dotnet restore
     - dotnet build
     - dotnet test test/NosCore.ReverseProxy.Tests -v m --no-build
