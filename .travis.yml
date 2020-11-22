@@ -24,7 +24,7 @@ jobs:
       script:
         - dotnet restore
         - dotnet build
-        - dotnet test test/NosCore.ReverseProxy.Tests -v m --runtime linux-musl-x64 --nologo
+        - dotnet test test/NosCore.ReverseProxy.Tests -v m
 deploy:
   cleanup: true
   provider: script
