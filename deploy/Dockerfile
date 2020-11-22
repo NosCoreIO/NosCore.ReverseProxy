@@ -1,4 +1,4 @@
-ARG REPO=mcr.microsoft.com/dotnet/runtime
+  ARG REPO=mcr.microsoft.com/dotnet/runtime
 FROM $REPO:5.0-alpine
 
 RUN apk add --no-cache icu-libs	# Install .NET
@@ -14,10 +14,9 @@ RUN wget -O dotnet.tar.gz https://dotnetcli.azureedge.net/dotnet/Runtime/$DOTNET
     && tar -C /usr/share/dotnet -oxzf dotnet.tar.gz \
     && rm dotnet.tar.gz
 
-COPY ./build/net5.0/linux-musl-x64 /app/build/net5.0
-COPY ./configuration /app/configuration
+COPY . /app
 
-WORKDIR /app/build/net5.0
+WORKDIR /app/build/bin
 
 EXPOSE 4000 1337
 
