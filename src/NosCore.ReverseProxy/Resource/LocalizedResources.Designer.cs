@@ -61,6 +61,15 @@ namespace NosCore.ReverseProxy.Resource {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Client disconnected {0}.
+        /// </summary>
+        public static string DISCONNECTED {
+            get {
+                return ResourceManager.GetString("DISCONNECTED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to An error occurred.
         /// </summary>
         public static string ERROR {
@@ -84,15 +93,6 @@ namespace NosCore.ReverseProxy.Resource {
         public static string PACKET_RECEIVED {
             get {
                 return ResourceManager.GetString("PACKET_RECEIVED", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Packet sent to {0}.
-        /// </summary>
-        public static string PACKET_SENT {
-            get {
-                return ResourceManager.GetString("PACKET_SENT", resourceCulture);
             }
         }
         

@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
@@ -18,13 +19,9 @@ namespace NosCore.ReverseProxy
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            try
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 Logger.PrintHeader(ConsoleText);
-            }
-            catch
-            {
-                // ignored as header is not important
             }
 
             await _proxy.Start(stoppingToken);

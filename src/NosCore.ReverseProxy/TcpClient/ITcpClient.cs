@@ -11,5 +11,6 @@ namespace NosCore.ReverseProxy.TcpClient
     {
         Task ConnectAsync(IPAddress ip, int port);
         Stream GetStream();
+        void Close();
     }
 }

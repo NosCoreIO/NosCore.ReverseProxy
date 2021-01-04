@@ -15,6 +15,6 @@ namespace NosCore.ReverseProxy.I18N
         MAINTENANCE_PACKET_SENT,
         PROXY_STARTED,
         ERROR,
-        PACKET_SENT
+        DISCONNECTED
     }
 }

@@ -57,15 +57,19 @@ namespace NosCore.ReverseProxy.TcpProxy
                 var remoteStream = remoteClient.GetStream();
 
                 await Task.WhenAny(remoteStream.CopyToAsync(serverStream, stoppingToken), serverStream.CopyToAsync(remoteStream, stoppingToken));
-                _logger.LogTrace(LogLanguage.Instance.GetMessageFromKey(LogLanguageKey.PACKET_SENT), remoteClient.Client.RemoteEndPoint);
+                _logger.LogDebug(LogLanguage.Instance.GetMessageFromKey(LogLanguageKey.DISCONNECTED), remoteClient.Client.RemoteEndPoint);
+                remoteStream.Close();
+                serverStream.Close();
+                client.Close();
+                remoteClient.Client.Close();
             }
-            catch
+            catch(Exception ex)
             {
                 if (channelConfiguration.ServerType == ServerType.LoginServer)
                 {
                     await remoteClient.Client.SendAsync(_packet, SocketFlags.None);
                     await Task.Delay(1000, stoppingToken);//this prevent sending close too fast
-                    _logger.LogWarning(LogLanguage.Instance.GetMessageFromKey(LogLanguageKey.MAINTENANCE_PACKET_SENT), remoteClient.Client.RemoteEndPoint);
+                    _logger.LogWarning(LogLanguage.Instance.GetMessageFromKey(LogLanguageKey.MAINTENANCE_PACKET_SENT), remoteClient.Client.RemoteEndPoint, ex);
                 }
             }
         }

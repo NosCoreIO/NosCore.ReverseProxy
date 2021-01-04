@@ -32,6 +32,11 @@ namespace NosCore.ReverseProxy.TcpClient
             return _client.ConnectAsync(ip, port);
         }
 
+        public void Close()
+        {
+            _client.Close();
+        }
+
         public void Dispose()
         {
             _client.Dispose();
