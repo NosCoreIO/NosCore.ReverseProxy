@@ -4,7 +4,6 @@
   <img src="https://cdn.discordapp.com/attachments/319565884454731795/426892646288457728/N2.png"/>
 </p>
 
-[![Travis build status](https://travis-ci.com/NosCoreIO/NosCore.Shared.svg?branch=master)](https://travis-ci.com/NosCoreIO/NosCore.ReverseProxy)
 [![.NET](https://github.com/NosCoreIO/NosCore.ReverseProxy/actions/workflows/dotnet.yml/badge.svg?branch=master)](https://github.com/NosCoreIO/NosCore.ReverseProxy/actions/workflows/dotnet.yml)
 
 # Special Thanks for Contributions #
