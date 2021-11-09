@@ -22,7 +22,7 @@
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="5.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Hosting.Systemd" Version="5.0.1" />
 		<PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="5.0.1" />
-		<PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
 		<PackageReference Include="NetEscapades.Configuration.Yaml" Version="2.1.0" />
 		<PackageReference Include="NosCore.Packets" Version="1.9.7" />
 		<PackageReference Include="NosCore.Shared" Version="1.14.4" />
