@@ -24,7 +24,7 @@
 		<PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="6.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
 		<PackageReference Include="NetEscapades.Configuration.Yaml" Version="2.1.0" />
-		<PackageReference Include="NosCore.Packets" Version="1.9.8" />
+		<PackageReference Include="NosCore.Packets" Version="7.0.0" />
 		<PackageReference Include="NosCore.Shared" Version="1.14.4" />
 		<PackageReference Include="Serilog.Extensions.Hosting" Version="4.2.0" />
 	</ItemGroup>
