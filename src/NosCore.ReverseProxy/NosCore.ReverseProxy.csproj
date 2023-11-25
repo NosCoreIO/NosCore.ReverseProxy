@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Worker">
 
 	<PropertyGroup>
-		<TargetFramework>net7.0</TargetFramework>
+		<TargetFramework>net8.0</TargetFramework>
 		<OutputType>Exe</OutputType>
 		<TieredCompilation>true</TieredCompilation>
 		<LangVersion>latest</LangVersion>
@@ -19,14 +19,14 @@
 
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.0" />
-		<PackageReference Include="Microsoft.Extensions.Hosting.Systemd" Version="7.0.0" />
-		<PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="7.0.0" />
-		<PackageReference Include="Microsoft.Extensions.Logging" Version="7.0.0" />
-		<PackageReference Include="NetEscapades.Configuration.Yaml" Version="2.2.0" />
-		<PackageReference Include="NosCore.Packets" Version="13.0.0" />
-		<PackageReference Include="NosCore.Shared" Version="3.4.0" />
-		<PackageReference Include="Serilog.Extensions.Hosting" Version="5.0.1" />
+		<PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Hosting.Systemd" Version="8.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="8.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
+		<PackageReference Include="NetEscapades.Configuration.Yaml" Version="3.1.0" />
+		<PackageReference Include="NosCore.Packets" Version="15.0.0" />
+		<PackageReference Include="NosCore.Shared" Version="5.0.0" />
+		<PackageReference Include="Serilog.Extensions.Hosting" Version="8.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>
