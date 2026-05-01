@@ -13,8 +13,8 @@
     <PackageReference Include="MSTest.TestAdapter" Version="4.2.1" />
     <PackageReference Include="MSTest.TestFramework" Version="4.2.1" />
     <!-- Explicit references to fix security vulnerabilities in transitive dependencies -->
-    <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.17.0" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.17.0" />
+    <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.18.0" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.18.0" />
   </ItemGroup>
 
   <ItemGroup>
