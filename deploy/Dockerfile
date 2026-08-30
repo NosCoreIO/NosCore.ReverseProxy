@@ -1,22 +1,19 @@
-ARG REPO=mcr.microsoft.com/dotnet/runtime-deps
-FROM $REPO:10.0-alpine
+FROM mcr.microsoft.com/dotnet/sdk:10.0-alpine AS build
+WORKDIR /src
+COPY NuGet.config Directory.Build.props* ./
+COPY src/ src/
+RUN --mount=type=cache,target=/root/.nuget/packages \
+    dotnet publish src/NosCore.ReverseProxy -c Release -o /out/app
 
-RUN apk add --no-cache icu-libs	# Install .NET
+FROM mcr.microsoft.com/dotnet/runtime:10.0-alpine
+
+# runtime-deps sets DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=true and ships no ICU data.
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
+RUN apk add --no-cache icu-libs
 
-# Install .NET
-ENV DOTNET_VERSION 10.0.0
-
-RUN wget -O dotnet.tar.gz https://dotnetcli.azureedge.net/dotnet/Runtime/$DOTNET_VERSION/dotnet-runtime-$DOTNET_VERSION-linux-musl-x64.tar.gz \
-    && mkdir -p /usr/share/dotnet \
-    && tar -C /usr/share/dotnet -oxzf dotnet.tar.gz \
-    && ln -s /usr/share/dotnet/dotnet /usr/bin/dotnet \
-    && rm dotnet.tar.gz
-
-COPY ./configuration /app/configuration
-COPY ./build/net10.0 /app/build/net10.0
-
+COPY configuration /app/configuration
 WORKDIR /app/build/net10.0
+COPY --from=build /out/app .
 
 EXPOSE 4000 1337
 
