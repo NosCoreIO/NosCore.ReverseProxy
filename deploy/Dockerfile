@@ -14,6 +14,7 @@ RUN apk add --no-cache icu-libs
 COPY configuration /app/configuration
 WORKDIR /app/build/net10.0
 COPY --from=build /out/app .
+USER $APP_UID
 
 EXPOSE 4000 1337
 
