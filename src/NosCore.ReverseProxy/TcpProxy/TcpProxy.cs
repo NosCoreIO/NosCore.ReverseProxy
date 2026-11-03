@@ -14,6 +14,7 @@ using NosCore.ReverseProxy.I18N;
 using NosCore.ReverseProxy.TcpClient;
 using NosCore.ReverseProxy.TcpClientFactory;
 using NosCore.Shared.Enumerations;
+using NosCore.Shared.I18N;
 
 namespace NosCore.ReverseProxy.TcpProxy
 {
@@ -23,9 +24,12 @@ namespace NosCore.ReverseProxy.TcpProxy
         private readonly ReverseProxyConfiguration _configuration;
         private readonly byte[] _packet;
         private readonly ITcpClientFactory _tcpClientFactory;
+        private readonly ILogLanguageLocalizer<LogLanguageKey> _logLanguage;
 
-        public TcpProxy(ILogger<TcpProxy> logger, ReverseProxyConfiguration configuration, ITcpClientFactory tcpClientFactory)
+        public TcpProxy(ILogger<TcpProxy> logger, ReverseProxyConfiguration configuration, ITcpClientFactory tcpClientFactory,
+            ILogLanguageLocalizer<LogLanguageKey> logLanguage)
         {
+            _logLanguage = logLanguage;
             _logger = logger;
             _configuration = configuration;
             _tcpClientFactory = tcpClientFactory;
@@ -45,7 +49,7 @@ namespace NosCore.ReverseProxy.TcpProxy
 
         internal async Task HandleClientAsync(CancellationToken stoppingToken, System.Net.Sockets.TcpClient remoteClient, ChannelConfiguration channelConfiguration)
         {
-            _logger.LogTrace(LogLanguage.Instance.GetMessageFromKey(LogLanguageKey.PACKET_RECEIVED), remoteClient.Client.RemoteEndPoint);
+            _logger.LogTrace(_logLanguage[LogLanguageKey.PACKET_RECEIVED], remoteClient.Client.RemoteEndPoint);
             var ip = (await Dns.GetHostAddressesAsync(channelConfiguration.RemoteHost ?? string.Empty)).First();
             remoteClient.NoDelay = true;
             remoteClient.ReceiveTimeout = _configuration.Timeout;
@@ -57,7 +61,7 @@ namespace NosCore.ReverseProxy.TcpProxy
                 var remoteStream = remoteClient.GetStream();
 
                 await Task.WhenAny(remoteStream.CopyToAsync(serverStream, stoppingToken), serverStream.CopyToAsync(remoteStream, stoppingToken));
-                _logger.LogDebug(LogLanguage.Instance.GetMessageFromKey(LogLanguageKey.DISCONNECTED), remoteClient.Client.RemoteEndPoint);
+                _logger.LogDebug(_logLanguage[LogLanguageKey.DISCONNECTED], remoteClient.Client.RemoteEndPoint);
                 remoteStream.Close();
                 serverStream.Close();
                 client.Close();
@@ -69,8 +73,10 @@ namespace NosCore.ReverseProxy.TcpProxy
                 {
                     await remoteClient.Client.SendAsync(_packet, SocketFlags.None);
                     await Task.Delay(1000, stoppingToken);//this prevent sending close too fast
-                    _logger.LogWarning(LogLanguage.Instance.GetMessageFromKey(LogLanguageKey.MAINTENANCE_PACKET_SENT), remoteClient.Client.RemoteEndPoint, ex);
+                    _logger.LogWarning(ex, _logLanguage[LogLanguageKey.MAINTENANCE_PACKET_SENT], remoteClient.Client.RemoteEndPoint);
                 }
+
+                remoteClient.Client.Close();
             }
         }
 
@@ -79,7 +85,7 @@ namespace NosCore.ReverseProxy.TcpProxy
             var server = new TcpListener(IPAddress.Any, channelConfiguration.LocalPort);
             server.Start();
 
-            _logger.LogInformation(LogLanguage.Instance.GetMessageFromKey(LogLanguageKey.PROXY_STARTED), channelConfiguration.LocalPort, $"{channelConfiguration.RemoteHost}:{channelConfiguration.RemotePort}");
+            _logger.LogInformation(_logLanguage[LogLanguageKey.PROXY_STARTED], channelConfiguration.LocalPort, $"{channelConfiguration.RemoteHost}:{channelConfiguration.RemotePort}");
             while (!stoppingToken.IsCancellationRequested)
             {
                 try
@@ -89,7 +95,7 @@ namespace NosCore.ReverseProxy.TcpProxy
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(LogLanguage.Instance.GetMessageFromKey(LogLanguageKey.ERROR), ex);
+                    _logger.LogError(ex, _logLanguage[LogLanguageKey.ERROR]);
                 }
 
             }
