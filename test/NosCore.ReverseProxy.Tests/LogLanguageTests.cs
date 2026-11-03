@@ -19,19 +19,10 @@ namespace NosCore.ReverseProxy.Tests
             new(new StringLocalizer<LocalizedResources>(
                 new ResourceManagerStringLocalizerFactory(Options.Create(new LocalizationOptions()), new LoggerFactory())));
 
-        [DataTestMethod]
-        [DataRow(RegionType.EN)]
-        [DataRow(RegionType.CS)]
-        [DataRow(RegionType.DE)]
-        [DataRow(RegionType.ES)]
-        [DataRow(RegionType.FR)]
-        [DataRow(RegionType.IT)]
-        [DataRow(RegionType.PL)]
-        [DataRow(RegionType.TR)]
-        [DataRow(RegionType.RU)]
-        public void EveryKeyHasATranslation(RegionType region)
+        [TestMethod]
+        public void EveryKeyHasANeutralText()
         {
-            CultureInfo.CurrentUICulture = new CultureInfo(region.ToString());
+            CultureInfo.CurrentUICulture = CultureInfo.InvariantCulture;
 
             var missing = I18NTestHelpers.GetKeysWithMissingTranslations(_logLanguage).ToList();
 

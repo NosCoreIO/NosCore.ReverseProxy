@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -82,10 +81,11 @@ namespace NosCore.ReverseProxy.Tests
 
             Assert.AreEqual($"failc {(int)LoginFailType.Maintenance}", new string(decoded));
             Assert.AreEqual(25, buffer[read - 1]);
+            Assert.AreEqual(0, await player.GetStream().ReadAsync(buffer));
         }
 
         [TestMethod]
-        public async Task AnUnreachableWorldServerSendsNothing()
+        public async Task AnUnreachableWorldServerClosesThePlayerConnection()
         {
             var configuration = Configuration(ServerType.WorldServer);
             var proxy = CreateProxy(configuration, UnreachableServer().Object);
@@ -94,8 +94,8 @@ namespace NosCore.ReverseProxy.Tests
 
             await proxy.HandleClientAsync(CancellationToken.None, accepted, configuration.Channels![0]);
 
-            player.GetStream().ReadTimeout = 500;
-            Assert.ThrowsExactly<IOException>(() => player.GetStream().ReadByte());
+            player.GetStream().ReadTimeout = 5000;
+            Assert.AreEqual(-1, player.GetStream().ReadByte());
         }
 
         [TestMethod]
