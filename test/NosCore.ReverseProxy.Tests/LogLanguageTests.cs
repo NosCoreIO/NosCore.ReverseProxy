@@ -29,7 +29,7 @@ namespace NosCore.ReverseProxy.Tests
             Assert.AreEqual(0, missing.Count, string.Join(", ", missing));
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(RegionType.EN)]
         [DataRow(RegionType.FR)]
         public void EveryTranslationHasAKey(RegionType region)
