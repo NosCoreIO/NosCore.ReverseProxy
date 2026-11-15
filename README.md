@@ -32,6 +32,9 @@ Channels:
     ServerType: WorldServer
 ```
 
+`Timeout` is how long, in milliseconds, the proxy waits to connect to a server before giving up (0 waits as long as
+the operating system does). A login channel that gives up sends the maintenance message.
+
 ## How it works
 
 <p align="center">

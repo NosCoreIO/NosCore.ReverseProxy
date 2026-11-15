@@ -85,6 +85,26 @@ namespace NosCore.ReverseProxy.Tests
         }
 
         [TestMethod]
+        public async Task ALoginServerThatNeverAnswersGetsTheMaintenancePacketAfterTheTimeout()
+        {
+            var configuration = Configuration(ServerType.LoginServer);
+            configuration.Timeout = 200;
+            var server = new Mock<ITcpClient>();
+            server.Setup(s => s.ConnectAsync(It.IsAny<IPAddress>(), It.IsAny<int>()))
+                .Returns(new TaskCompletionSource().Task);
+            var proxy = CreateProxy(configuration, server.Object);
+            var (accepted, player) = await ConnectPairAsync();
+            using var _ = player;
+
+            await proxy.HandleClientAsync(CancellationToken.None, accepted, configuration.Channels![0])
+                .WaitAsync(TimeSpan.FromSeconds(5));
+
+            var buffer = new byte[64];
+            var read = await player.GetStream().ReadAsync(buffer);
+            Assert.AreEqual(25, buffer[read - 1]);
+        }
+
+        [TestMethod]
         public async Task AnUnreachableWorldServerClosesThePlayerConnection()
         {
             var configuration = Configuration(ServerType.WorldServer);

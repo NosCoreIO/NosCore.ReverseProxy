@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -52,11 +52,13 @@ namespace NosCore.ReverseProxy.TcpProxy
             _logger.LogTrace(_logLanguage[LogLanguageKey.PACKET_RECEIVED], remoteClient.Client.RemoteEndPoint);
             var ip = (await Dns.GetHostAddressesAsync(channelConfiguration.RemoteHost ?? string.Empty)).First();
             remoteClient.NoDelay = true;
-            remoteClient.ReceiveTimeout = _configuration.Timeout;
             using var client = _tcpClientFactory.CreateTcpClient();
             try
             {
-                await client.ConnectAsync(ip, channelConfiguration.RemotePort);
+                var connect = client.ConnectAsync(ip, channelConfiguration.RemotePort);
+                await (_configuration.Timeout > 0
+                    ? connect.WaitAsync(TimeSpan.FromMilliseconds(_configuration.Timeout), stoppingToken)
+                    : connect.WaitAsync(stoppingToken));
                 var serverStream = client.GetStream();
                 var remoteStream = remoteClient.GetStream();
 
@@ -75,7 +77,9 @@ namespace NosCore.ReverseProxy.TcpProxy
                     await Task.Delay(1000, stoppingToken);//this prevent sending close too fast
                     _logger.LogWarning(ex, _logLanguage[LogLanguageKey.MAINTENANCE_PACKET_SENT], remoteClient.Client.RemoteEndPoint);
                 }
-
+            }
+            finally
+            {
                 remoteClient.Client.Close();
             }
         }
@@ -90,15 +94,20 @@ namespace NosCore.ReverseProxy.TcpProxy
             {
                 try
                 {
-                    var remoteClient = await server.AcceptTcpClientAsync();
+                    var remoteClient = await server.AcceptTcpClientAsync(stoppingToken);
                     _ = HandleClientAsync(stoppingToken, remoteClient, channelConfiguration);
+                }
+                catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
+                {
+                    break;
                 }
                 catch (Exception ex)
                 {
                     _logger.LogError(ex, _logLanguage[LogLanguageKey.ERROR]);
                 }
-
             }
+
+            server.Stop();
         }
 
         public Task Start(CancellationToken stoppingToken)
