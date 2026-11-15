@@ -1,4 +1,4 @@
-﻿using NosCore.ReverseProxy.TcpClient;
+using NosCore.ReverseProxy.TcpClient;
 
 namespace NosCore.ReverseProxy.TcpClientFactory
 {
