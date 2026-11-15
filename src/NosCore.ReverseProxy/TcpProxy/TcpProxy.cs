@@ -77,7 +77,9 @@ namespace NosCore.ReverseProxy.TcpProxy
                     await Task.Delay(1000, stoppingToken);//this prevent sending close too fast
                     _logger.LogWarning(ex, _logLanguage[LogLanguageKey.MAINTENANCE_PACKET_SENT], remoteClient.Client.RemoteEndPoint);
                 }
-
+            }
+            finally
+            {
                 remoteClient.Client.Close();
             }
         }
