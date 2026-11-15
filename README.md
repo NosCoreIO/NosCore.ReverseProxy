@@ -11,7 +11,7 @@
 </p>
 
 A TCP proxy to put in front of the NosCore login and world servers. Each configured channel listens on a local port
-and forwards to a server; when the login server does not answer in time, the proxy replies with the client's own
+and forwards to a server; when the login server cannot be reached, the proxy replies with the client's own
 maintenance message instead of leaving it hanging.
 
 ## Configuration
@@ -35,7 +35,7 @@ Channels:
 ## How it works
 
 <p align="center">
-  <img alt="Packet flow: a packet is forwarded to the login server; on timeout a maintenance packet is sent back" src="documentation.png"/>
+  <img alt="Packet flow: a packet is forwarded to the login server; when it cannot be reached a maintenance packet is sent back" src="documentation.png"/>
 </p>
 
 ## Running
@@ -45,7 +45,9 @@ dotnet build
 dotnet build/net11.0/NosCore.ReverseProxy.dll
 ```
 
-or `docker compose up`, which mounts `configuration/` into the container.
+or `docker compose up`, which mounts `configuration/` into the container. Inside the container `127.0.0.1` is the
+container itself, so set each `RemoteHost` to an address the container can reach, such as the Docker host's address or
+`host.docker.internal` where it is supported.
 
 ## Building
 
